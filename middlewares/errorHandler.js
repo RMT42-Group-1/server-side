@@ -16,6 +16,7 @@ function errorHandler(err, req, res, next) {
             res.status(401).json({message: err.name})
             break
         case "JsonWebTokenError":
+        case "Unauthenticated":
             res.status(401).json({message: "Unauthenticated"})
             break
         default:

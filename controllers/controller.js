@@ -39,6 +39,24 @@ class Controller {
             next(err)
         }
     }
+
+    static async getCards(req, res, next) {
+        try {
+            const cards = await Card.findAll()
+            res.status(200).json(cards)
+        } catch(err) {
+            next(err)
+        }
+    }
+
+    static async getScores(req, res, next) {
+        try {
+            const scores = await Score.findAll()
+            res.status(200).json(scores)
+        } catch(err) {
+            next(err)
+        }
+    }
 }
 
 module.exports = Controller
