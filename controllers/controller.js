@@ -18,6 +18,27 @@ class Controller {
             next(err)
         }
     }
+
+    static async login(req, res, next) {
+        try {
+            const {email, password} = req.body
+            if(!email) {throw {name: "Email is required"}}
+            if(!password) {throw {name: "Password is required"}}
+
+            const user = await User.findOne({
+                where: {email}
+            })
+            if(!user) {throw {name: "Invalid email or password"}}
+
+            const valid = comparePassword(password, user.password)
+            if(!valid) {throw {name: "Invalid email or password"}}
+
+            const token = signToken({id: user.id, username: user.username, email: user.email })
+            res.status(200).json({access_token: token})
+        } catch(err) {
+            next(err)
+        }
+    }
 }
 
 module.exports = Controller
