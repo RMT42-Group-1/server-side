@@ -71,10 +71,19 @@ class Controller {
 	static async getScores(req, res, next) {
 		try {
 			const scores = await Score.findAll({
+				include: {
+					model: User,
+					attributes: {
+						exclude: ['password', 'createdAt', 'updatedAt'],
+					},
+				},
 				order: [
 					['point', 'DESC'],
 					['updatedAt', 'ASC'],
 				],
+				attributes: {
+					exclude: ['createdAt', 'updatedAt'],
+				},
 			});
 			res.status(200).json(scores);
 		} catch (err) {
