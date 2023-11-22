@@ -1,5 +1,5 @@
 function errorHandler(err, req, res, next) {
-	console.log(err.name);
+	console.log(err);
 	let status, message;
 
 	switch (err.name) {
