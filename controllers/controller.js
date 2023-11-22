@@ -53,7 +53,16 @@ class Controller {
 				username: user.username,
 				email: user.email,
 			});
-			res.status(200).json({ access_token: token });
+
+			res.status(200).json({
+				access_token: token,
+				profile: {
+					id: user.id,
+					username: user.username,
+					email: user.email,
+					photoUrl: user.photoUrl,
+				},
+			});
 		} catch (err) {
 			next(err);
 		}
