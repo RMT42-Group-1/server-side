@@ -22,15 +22,18 @@ io.on("connection", (socket) => {
 
   io.emit("SOCKETUS", {message: `New user with id ${socket.id}`})
 
+  io.emit("NewUserConnected", socket.id);
+
   socket.on("disconnect", () => {
     console.log(`Socket with id ${socket.id} disconnected`)
+    io.emit("UserDisconnected", socket.id);
   })
 
   socket.on("JoinRoom", (room) => {
     socket.join(room)
-    const users = []
-    const scores = []
-    socket.emit("fetchData", (users, data))
+    socket.emit("joinConfirm", {message: `User with id: ${socket.id} entered room: ${room}`})
+
+    if(room) io.to(room).emit("RoomGreetings", {message: `Hello room ${room} from user ${socket.id}`})
   })
 });
 
