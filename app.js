@@ -1,50 +1,72 @@
-if (process.env.NODE_ENV !== "production") {
-    require('dotenv').config()
+if (process.env.NODE_ENV !== 'production') {
+	require('dotenv').config();
 }
 
-const express = require('express')
-const app = express()
-const port = 3000
-const { createServer } = require("http");
-const { Server } = require("socket.io");
+const express = require('express');
+const app = express();
+const port = 3000;
+const { createServer } = require('http');
+const { Server } = require('socket.io');
 
 const server = createServer(app);
 const io = new Server(server, {
-  cors: {
-    origin: "*"
-  }
+	cors: {
+		origin: '*',
+	},
 });
 
-io.on("connection", (socket) => {
-  console.log("New Connection", socket.id)
+io.on('connection', (socket) => {
+	console.log('New Connection', socket.id);
 
-  socket.emit("SOCKETUS", {message: `Your ID is : ${socket.id}`})
+	socket.emit('SOCKETUS', { message: `Your ID is : ${socket.id}` });
 
-  io.emit("SOCKETUS", {message: `New user with id ${socket.id}`})
+	io.emit('SOCKETUS', { message: `New user with id ${socket.id}` });
 
-  io.emit("NewUserConnected", socket.id);
+	io.emit('NewUserConnected', socket.id);
 
-  socket.on("disconnect", () => {
-    console.log(`Socket with id ${socket.id} disconnected`)
-    io.emit("UserDisconnected", socket.id);
-  })
+	socket.on('disconnect', () => {
+		console.log(`Socket with id ${socket.id} disconnected`);
+		io.emit('UserDisconnected', socket.id);
+	});
 
-  socket.on("JoinRoom", (room) => {
-    socket.join(room)
-    socket.emit("joinConfirm", {message: `User with id: ${socket.id} entered room: ${room}`})
+	socket.on('JoinRoom', (room) => {
+		socket.join(room);
+		socket.emit('joinConfirm', {
+			message: `User with id: ${socket.id} entered room: ${room}`,
+		});
 
-    if(room) io.to(room).emit("RoomGreetings", {message: `Hello room ${room} from user ${socket.id}`})
-  })
+		if (room)
+			io.to(room).emit('RoomGreetings', {
+				message: `Hello room ${room} from user ${socket.id}`,
+			});
+	});
+
+	// socket.on('JoinRoom', (room) => {
+	// 	socket.join(room);
+	// 	const users = [];
+	// 	const scores = [];
+	// 	// socket.emit("fetchData", (users, data))
+	// });
+
+	socket.on('card:flip', (cards) => {
+		console.log('new data');
+		socket.broadcast.emit('card:newData', cards);
+	});
+
+	socket.on('game:updatePoint', (users) => {
+		console.log('point');
+		socket.broadcast.emit('game:newUsersPoint', users);
+	});
 });
 
-const cors = require("cors")
+const cors = require('cors');
 
-app.use(cors())
-app.use(express.json())
-app.use(express.urlencoded({extended: false}))
+app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 
-app.use(require("./routes/router.js"))
+app.use(require('./routes/router.js'));
 
 server.listen(port, () => {
-  console.log(`Example app listening on port ${port}`)
-})
+	console.log(`Example app listening on port ${port}`);
+});
