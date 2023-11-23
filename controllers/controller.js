@@ -34,7 +34,7 @@ class Controller {
             if(!valid) {throw {name: "Invalid email or password"}}
 
             const token = signToken({id: user.id, username: user.username, email: user.email })
-            res.status(200).json({access_token: token})
+            res.status(200).json({profile: {access_token: token, id: user.id, username: user.username, email: user.email}})
         } catch(err) {
             next(err)
         }
